@@ -6,17 +6,29 @@ import random
 locations = []
 descriptions = []
 
-token = "6803079835:AAF8fpiTRyvrgzRfZTDtgf7SM9Q5AP_DdaE"
+token = "Тут Ваш токен! :0"
 
 bot = telebot.TeleBot(token)
 
 LOGIN_FILE = 'login.json'
 
 
-@bot.message_handler(commands=['start'])  
+@bot.message_handler(commands=['start'])
 def start(message):
-  bot.send_message(message.chat.id, "Бот запущен")
+  keyboard = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
+  button_1 = types.KeyboardButton("Басурман")
+  button_2 = types.KeyboardButton("Герой сказки")
+  keyboard.add(button_1, button_2)
+  
+  bot.send_message(message.chat.id, "Выберите, кем вы являетесь:", reply_markup=keyboard)
 
+@bot.message_handler(func=lambda message: message.text == "Басурман")  
+def basurman(message):
+  bot.send_message(message.chat.id, "Увы, басурманам дорога закрыта! Ступайте обратно себе в хоромы мусорные!")
+
+@bot.message_handler(func=lambda message: message.text == "Герой сказки")
+def geroy(message):
+  bot.send_message(message.chat.id, "Добро пожаловать, путник! Ты встал на путь праведный и теперь желаешь помочь берегам Азовского моря избавиться от мусорного басурманства... Тогда тебе к нам! Поделись гео-локацией c нахождением мусорного басурманства или напиши команду /trash, чтобы посмотреть папирусы с дорогами крутыми до мусорных басурманств!")
 
 @bot.message_handler(commands=['trash'])
 def trash(message):
@@ -42,8 +54,7 @@ def trash(message):
         }
         json.dump(data, f)
 
-    bot.send_message(message.chat.id, f"Локация удалена. Ссылка: {url}")
-    bot.send_message(message.chat.id, f"Описание: {description}")
+    bot.send_message(message.chat.id, f"Вот тебе путник свет вездесущий! Путь до папируса с дорогами крутыми: {url} \nПисьмена, оставленные твоими братьями и сестрами: {description}")
 
 @bot.message_handler(content_types=['location'])
 def save_location(message):
@@ -56,7 +67,7 @@ def save_location(message):
 
   locations.append(location)
 
-  bot.send_message(message.chat.id, "Отправьте описание")
+  bot.send_message(message.chat.id, "Начеркайте письмена для большего понимания, сколько понадобиться Ваших братьев и сестер для зачистки сие войска мусорного басурманства:")
 
 @bot.message_handler(content_types=['text'])  
 def save_description(message):
@@ -77,7 +88,7 @@ def save_description(message):
 
     json.dump(data, f)
 
-  bot.send_message(message.chat.id, "Описание сохранено")
+  bot.send_message(message.chat.id, "Письмена сохранены и будут переданы Вашим братья и сестрам!")
 
 
 bot.polling()
